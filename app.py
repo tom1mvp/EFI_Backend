@@ -20,7 +20,7 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 ma = Marshmallow(app)
 
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={ r"/*": {"origins": "*"}})
 
 from models import (
     User, 
