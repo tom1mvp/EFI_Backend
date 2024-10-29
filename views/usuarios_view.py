@@ -4,9 +4,9 @@ from app import db
 from models import User
 from schemas import UserSchema
 
-usuario_bp = Blueprint('usuarios', __name__)
+usuario_bp = Blueprint('users', __name__)
 
-@usuario_bp.route("/usuarios", methods=['GET'])
+@usuario_bp.route("/users", methods=['GET'])
 def mostrar_usuario():
     usuario_nombre = request.args.get('usuario_nombre')
     
@@ -20,7 +20,7 @@ def mostrar_usuario():
     usuario = User.query.all()
     return UserSchema(many=True).dump(usuario), 200
 
-@usuario_bp.route("/usuarios/crear", methods=['POST'])
+@usuario_bp.route("/users/crear", methods=['POST'])
 def crear_usuario():
     data = request.get_json()
     nuevo_usuario = User(username=data['username'])
@@ -51,6 +51,7 @@ def actualizar_usuario(id):
     
     data = request.get_json()
     usuario.username = data.get('username', usuario.username)
+    usuario.password_hash = data.get('password_hash', usuario.password_hash)
     
     db.session.commit()
-    return jsonify(UserSchema().dump(usuario)), 200
+    return jsonify(UserSchema().dump(usuario)), 201

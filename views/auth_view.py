@@ -4,10 +4,45 @@ from flask_jwt_extended import create_access_token, get_jwt, jwt_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from models import User
-from schemas import UserSchema, MinimalUserSchema
+from schemas import UserSchema, MinimalUserSchema, SingUpUserSchema
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    email = data.get('email')
+    date_birthday = data.get('date_birthday')
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not all([first_name, last_name, email, date_birthday, username, password]):
+        return jsonify({"Error": "Complete todos los campos para registrarse correctamente"}), 400
+
+    password_hash = generate_password_hash(password=password, method='pbkdf2', salt_length=8)
+    
+    try:
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            date_birthday=date_birthday,
+            username=username,
+            password_hash=password_hash,
+            is_admin=0
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return jsonify({"message": "El usuario se creó correctamente"}), 201
+    
+    except Exception as e:
+        return jsonify({"Error": "Error interno al crear el usuario"}), 500
+    
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.authorization

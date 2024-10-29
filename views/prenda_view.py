@@ -92,7 +92,7 @@ def eliminar_tipo_prenda(id):
         db.session.commit()
         return jsonify({"message": "Se borró el tipo de prenda con éxito"}), 200
 
-@prenda_bp.route('/tipo/<int:id>', methods="POST")
+@prenda_bp.route('/tipo/<int:id>', methods=['POST'])
 def actualizar_tipo_prenda(id):
     tipo_prenda = Tipo_prenda.query.get(id)
     

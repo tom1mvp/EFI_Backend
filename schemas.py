@@ -32,7 +32,14 @@ class MinimalUserSchema(ma.SQLAlchemySchema):
         model = User
 
     username = ma.auto_field()
-
+class SingUpUserSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = User
+        id = ma.auto_field()
+        first_name = ma.auto_field()
+        last_name = ma.auto_field()
+        email = ma.auto_field()
+        date_birthday = ma.auto_field()
 class MarcaSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Marca

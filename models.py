@@ -3,12 +3,17 @@ from app import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(db.String(45), nullable=False)
+    last_name = db.Column(db.String(45), nullable=False)
+    username = db.Column(db.String(50), nullable=False, unique=True)
     password_hash = db.Column(db.String(300), nullable=False)
-    is_admin = db.Column(db.Boolean(0))
+    email = db.Column(db.String(45), nullable=False, unique=True)
+    date_birthday = db.Column(db.Date, nullable=True)
+    is_admin = db.Column(db.Boolean, default=False)
     
     def __str__(self):
         return self.username
+
 
 class Marca(db.Model):
     id = db.Column(db.Integer, primary_key=True)
