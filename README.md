@@ -1,7 +1,7 @@
 # EFI Flask - Backend:
 
 Este repositorio contiene únicamente la parte backend del proyecto. Para poder ver y utilizar todas las funciones del proyecto, 
-también necesitarás configurar la versión frontend, disponible en nuestro segundo repositorio.
+también necesitarás configurar la versión frontend, disponible en nuestro segundo repositorio. (https://github.com/MarcosAyrton/EFI-Flask.git)
 
 A continuación, detallamos el proceso de instalación y el uso correcto de la API.
 
