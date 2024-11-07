@@ -1,96 +1,111 @@
 from app import db
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False, unique=True)
     password_hash = db.Column(db.String(300), nullable=False)
-    is_admin = db.Column(db.Boolean(0))
+    is_admin = db.Column(db.Boolean, default=False)
     
-    def __str__(self):
+    def _str_(self):
         return self.username
+
 
 class Marca(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre =  db.Column(db.String(50), nullable=False)
+    nombre = db.Column(db.String(50), nullable=False)
     
-    def __str__(self):
+    def _str_(self):
         return self.nombre
+
 
 class Tipo_prenda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
     
-    def __str__(self):
-        return f"Tipo prenda{self.nombre}"
+    def _str_(self):
+        return f"Tipo prenda {self.nombre}"
     
+
 class Local(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
 
-    def __str__(self):
+    def _str_(self):
         return f"Local {self.nombre}"
+
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cantidad = db.Column(db.Integer)
-    activo = db.Column(db.Boolean(0))
+    activo = db.Column(db.Boolean, default=False)
 
-
-    
     local_id = db.Column(db.Integer, db.ForeignKey('local.id'), nullable=False)
-
     local = db.relationship('Local', backref=db.backref('stock', lazy=True))
 
-    def __str__(self):
-        return self.cantidad
-    
+    def _str_(self):
+        return str(self.cantidad)
+
+
 class Promocion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     descuento = db.Column(db.Integer)
 
-    def __str__(self):
-        return self.descuento
-    
+    def _str_(self):
+        return str(self.descuento)
+
+
 class Temporada(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre =  db.Column(db.String(20), nullable=False)
+    nombre = db.Column(db.String(20), nullable=False)
     
-    def __str__(self):
+    def _str_(self):
         return self.nombre
-    
+
+
 class Color(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    color =  db.Column(db.String(20), nullable=False)
+    color = db.Column(db.String(20), nullable=False)
     
-    def __str__(self):
+    def _str_(self):
         return self.color
-    
+
+
 class Talle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     talle = db.Column(db.String(5), nullable=False)
     
-    def __str__(self):
+    def _str_(self):
         return self.talle
-    
+
 class Prenda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
-    precio = db.Column(db.Integer)
+    precio = db.Column(db.Numeric(10, 2), nullable=False)
 
-    talle_id = db.Column(db.Integer, db.ForeignKey('talle.id'), nullable=False)
+    # Foreign key relationships
     color_id = db.Column(db.Integer, db.ForeignKey('color.id'), nullable=False)
-    temporada_id = db.Column(db.Integer, db.ForeignKey('temporada.id'), nullable=False)
-    stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'), nullable=False)
     marca_id = db.Column(db.Integer, db.ForeignKey('marca.id'), nullable=False)
-    tipo_prenda_id = db.Column(db.Integer, db.ForeignKey('tipo_prenda.id'), nullable=False)
-    promocion_id = db.Column(db.Integer, db.ForeignKey('promocion.id'), nullable=False)
+    temporada_id = db.Column(db.Integer, db.ForeignKey('temporada.id'), nullable=False)
 
-    talle = db.relationship('Talle', backref=db.backref('prenda', lazy=True))
-    color = db.relationship('Color', backref=db.backref('prenda', lazy=True))
-    temporada = db.relationship('Temporada', backref=db.backref('prenda', lazy=True))
-    stock = db.relationship('Stock', backref=db.backref('prenda', lazy=True))
-    marca = db.relationship('Marca', backref=db.backref('prenda', lazy=True))
-    tipo_prenda = db.relationship('Tipo_prenda', backref=db.backref('prenda', lazy=True))
-    promocion = db.relationship('Promocion', backref=db.backref('prenda', lazy=True))
+    # Relationships
+    color = db.relationship('Color', backref=db.backref('prendas', lazy=True))
+    marca = db.relationship('Marca', backref=db.backref('prendas', lazy=True))
+    temporada = db.relationship('Temporada', backref=db.backref('prendas', lazy=True))
 
+    def _str_(self):
+        return f"{self.nombre} - {self.marca.nombre} - {self.color.color} - {self.temporada.nombre}"
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'precio': self.precio,
+            'talle': self.talle.talle if self.talle else None,
+            'color': self.color.color if self.color else None,
+            'temporada': self.temporada.nombre if self.temporada else None,
+            'stock': self.stock.cantidad if self.stock else None,
+            'marca': self.marca.nombre if self.marca else None,
+            'tipo_prenda': self.tipo_prenda.nombre if self.tipo_prenda else None,
+            'promocion': self.promocion.descuento if self.promocion else None
+        }

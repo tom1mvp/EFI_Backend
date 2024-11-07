@@ -1,23 +1,13 @@
 from datetime import date
-
 from app import ma
-
-from models import (
-    User,
-    Marca,
-    Tipo_prenda,
-    Local,
-    Stock,
-    Promocion,
-    Prenda,
-    Temporada,
-    Color,
-    Talle
-)
 from marshmallow import validates, ValidationError, fields
+from models import (
+    User, Marca, Tipo_prenda, Local, Stock, Promocion, Prenda,
+    Temporada, Color, Talle
+)
 
+# Schema para el modelo de Usuario
 class UserSchema(ma.SQLAlchemySchema):
-
     class Meta:
         model = User
 
@@ -27,12 +17,12 @@ class UserSchema(ma.SQLAlchemySchema):
     is_admin = ma.auto_field()
 
 class MinimalUserSchema(ma.SQLAlchemySchema):
-
     class Meta:
         model = User
 
     username = ma.auto_field()
 
+# Schema para Marca
 class MarcaSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Marca
@@ -40,6 +30,7 @@ class MarcaSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
 
+# Schema para Tipo de Prenda
 class Tipo_prendaSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Tipo_prenda
@@ -47,6 +38,7 @@ class Tipo_prendaSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
 
+# Schema para Local
 class LocalSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Local
@@ -54,6 +46,7 @@ class LocalSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
 
+# Schema para Stock
 class StockSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Stock
@@ -62,6 +55,7 @@ class StockSchema(ma.SQLAlchemySchema):
     cantidad = ma.auto_field()
     local_id = ma.auto_field()
 
+# Schema para Promocion con validación en el descuento
 class PromocionSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Promocion
@@ -69,6 +63,13 @@ class PromocionSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     descuento = ma.auto_field()
 
+    @validates('descuento')
+    def validate_descuento(self, value):
+        if value < 0 or value > 100:
+            raise ValidationError("El descuento debe estar entre 0 y 100.")
+        return value
+
+# Schema para Temporada
 class TemporadaSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Temporada
@@ -76,6 +77,7 @@ class TemporadaSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     nombre = ma.auto_field()
 
+# Schema para Color
 class ColorSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Color
@@ -83,6 +85,7 @@ class ColorSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     color = ma.auto_field()
 
+# Schema para Talle
 class TalleSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Talle
@@ -90,25 +93,22 @@ class TalleSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     talle = ma.auto_field()
 
+# Schema para Prenda
 class PrendaSchema(ma.SQLAlchemySchema):
-    stock_items = fields.Nested(StockSchema, many=True) # Crea un subdirectorio donde muestra el stock (dentro de prenda)
-    marca_items = fields.Nested(MarcaSchema, many=True) # Crea un subdirectorio donde muestra la marca (dentro de prenda)
     class Meta:
         model = Prenda
 
     id = ma.auto_field()
-    nombre = ma.auto_field()
-    precio = ma.auto_field()
-    talle_id = ma.auto_field()
-    color_id = ma.auto_field()
-    temporada_id = ma.auto_field()
-    stock_id = ma.auto_field()
-    marca_id = ma.auto_field()
-    tipo_prenda_id = ma.auto_field()
-    promocion_id = ma.auto_field()
+    nombre = ma.auto_field(required=True)
+    precio = ma.auto_field(required=True)
+    
+    # Relacionar con entidades relacionadas como strings
+    color = fields.String(required=True)
+    temporada = fields.String(required=True)
+    marca = fields.String(required=True)
 
     @validates('precio')
     def validate_precio(self, value):
         if value <= 0:
-            raise ValidationError("El precio no es valido")
+            raise ValidationError("El precio debe ser mayor a cero.")
         return value
