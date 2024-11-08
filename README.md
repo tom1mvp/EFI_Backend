@@ -25,7 +25,7 @@ Con el repositorio clonado y el servidor activado, la API estará lista para rec
 
 * Crear un Usuario
   * Método: POST
-  * Endpoint: /api/users
+  * Endpoint: /api/crear/users
   * Cabecera de la solicitud: Authorization: Token <tu_token_de_autenticacion>
   * Cuerpo de la solicitud:
       {
@@ -35,13 +35,13 @@ Con el repositorio clonado y el servidor activado, la API estará lista para rec
 
 * Eliminar un Usuario
     * Método: DELETE
-    * Endpoint: /api/users/<id_usuario>
+    * Endpoint: /api/users/eliminar/<id_usuario>
     * Cabecera de la solicitud: Authorization: Token <tu_token_de_autenticacion>
     * Respuesta: Código de estado 200, indicando que el usuario fue eliminado con éxito.
 
 * Actualizar un Usuario
     * Método: PUT
-    * Endpoint: /api/users/<id_usuario>
+    * Endpoint: /api/users/actualizar/<id_usuario>
     * Cabecera de la solicitud: Authorization: Token <tu_token_de_autenticacion>
     * Cuerpo de la solicitud:
       {
